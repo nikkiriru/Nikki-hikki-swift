@@ -1,0 +1,132 @@
+// -----------------
+// 1. Список продуктов, которые нужны для приготовления борща, представлен множеством borshProducts. 
+// Список имеющихся продуктов представлен множеством haveProducts. 
+// Требуется вывести список продуктов, которые нужно купить для приготовления борща.
+
+let borshProducts: Set = ["Вода", "Говядина", "Свекла", "Морковь", "Лук", 
+                          "Масло", "Картофель", "Томатная паста", "Капуста", "Соль", 
+                          "Лавровый лист", "Укроп", "Чеснок", "Петрушка", "Перец"]
+let haveProducts: Set = ["Вода", "Говядина", "Свекла", "Томатная паста", "Капуста", 
+                         "Соль", "Лавровый лист", "Перец"]
+
+let needProducts = borshProducts.symmetricDifference(haveProducts)
+print("Необходимо купить: \(needProducts)")
+
+// -----------------
+// 2. Ваня живёт в квартире в центре Екатеринбурга. 
+// Дом, в котором находится его квартира, обслуживает несколько интернет-провайдеров. 
+// Ваня планирует переселиться в другой дом, который обслуживают другие провайдеры. 
+// Некоторые из провайдеров обслуживают оба дома. 
+// Задача проверить, к каким из провайдеров Ваня должен подключиться, 
+// чтобы после переезда не пришлось менять провайдера?
+
+let oldAddress: Set = ["Rostelecom", "MTS", "Insis", "Domru", "Beeline", 
+                       "Inetvdom", "KTelekom", "Convex", "Sevencom", "Ekanet"]
+let newAddress: Set = ["MTS", "Planeta", "Domru", "Beeline", "TTK", 
+                       "UGMKTelecom", "Convex", "Sevencom", "Ekanet", "Kabinet"]
+
+let sameProvider = oldAddress.intersection(newAddress)
+print("Ваня может подключиться к следующим провайдерам: \(sameProvider)")
+
+// -----------------
+// 3. Алина посетила два разных курса по веб-разработке. 
+// В каждом из курсов есть свой перечень тем для изучения. 
+// Некоторые темы могут повторяться. 
+// Задача вывести полный перечень, который Алина освоила на обоих курсах.
+
+let yandexCourse: Set = ["Beginner steps", "HTML", "CSS", "Git", "JavaScript", 
+                         "Grid", "API", "React", "Node.js", "JSX"]
+let skillfactoryCourse: Set = ["Beginner steps", "JavaScript", "TypeScript", "API", "SQL", 
+                               "Docker", "Linux", "PHPUnit", "React", "Grid"]
+
+let allTopics = yandexCourse.union(skillfactoryCourse)
+print("Анна освоила следующие темы:")
+allTopics.forEach { topic in print(topic)}
+
+// -----------------
+// 4. Создать словарь Животных типа [String: Int], где ключ- Название животного, а значение его вес в килограммах. 
+// Проверить, способен ли человек поднять одно из животных, имеющихся в словаре (порог поднятия считать равным 80 кг). 
+// Результат распечатать в консоль в виде: «Курица весит 3 кг. Я могу её поднять» или «Слон весит 1500 кг. Он слишком тяжёлый Для меня>>
+
+let weightAnimals: [String: Int] = [  
+    "Аллигатор": 230,
+    "Бобер": 30,
+    "Варан": 91,
+    "Газель": 29,
+    "Дельфин":300,
+    "Енот": 9,
+    "Ёж": 1,
+    "Жираф": 1500,
+    "Заяц": 6,
+    "Ирбис": 54,
+    "Кошка": 5,
+    "Лев": 190,
+    "Мангуст": 2,
+    "Носорог": 2300,
+    "Орангутан": 90,
+    "Пикачу": 5,
+    "Рысь": 25,
+    "Сурок": 6,
+    "Тюлень": 87,
+    "Утконос": 2,
+    "Фазан": 1,
+    "Хорек": 2,
+    "Цапля": 2,
+    "Черепаха": 65,
+    "Шакал": 11,
+    "Щука": 1,
+    "Эму": 37,
+    "Юруми": 36,
+    "Як": 580
+]
+let acceptableWeight = 80
+let oneAnimal = weightAnimals.randomElement()!
+let oneAnimalWeight = oneAnimal.value
+let compareWeight = oneAnimalWeight <= acceptableWeight
+compareWeight ? print("\(oneAnimal.key) весит \(oneAnimal.value) кг. Я могу его поднять.") : print("\(oneAnimal.key) весит \(oneAnimal.value) кг. Он слишком тяжёлый для меня.")
+
+// -----------------
+// 5. В кошельке (словарь) лежат банковские карты. 
+// Каждая из них имеет название (ключ), пин-код и сумму остатка. 
+// Владелец берёт одну из карт и производит оплату перечня товаров определённой стоимостью. 
+// Перечень товаров хранится в словаре типа [String:Int], где ключ название товара, а значение - его стоимость. 
+// Оплата пройдёт успешно, если владелец карты вводит верный пин-код от выбранной им карты, 
+// а также если сумма остатка на карте не менее, чем сумма покупки. 
+// Выведите на консоль сообщение об успешной покупке или о невозможности произвести транзакцию.
+
+let wallet: [String: (psw:Int, money:Int)] = [
+    "Sber": (1357, 30000),
+    "Tinkoff": (9246, 100000),
+    "Alpha": (8135, 5000),
+    "Bakai": (7924, 650000),
+    "Bunq": (6813, 300000)
+]
+let goods: [String: Int] = [
+    "Шаурма": 200,
+    "Кошачий корм 10 кг": 6000,
+    "Ийфон 14 про макс супер": 110000,
+]
+
+let chosenCard = wallet.randomElement()!
+print(chosenCard)
+
+var buyCost = 0
+let sumGoods = goods.forEach {(_, count) in buyCost += count}
+
+let rememberedPin: Set = [1357, 9246, 8135, 7924, 6813, 1346]  //Допустил к решению задачи такое дополнительно условие: Владелец помнит некоторое количество паролей, среди которых один пароль не от карт
+let enteredPin = rememberedPin.randomElement()!
+// print(enteredPin)
+let authCondition = enteredPin == chosenCard.value.psw
+// print(authCondition)
+
+let buyingPossibility = buyCost <= chosenCard.value.money
+// print(buyingPossibility)
+
+let youCanBuyItAll = buyingPossibility && authCondition
+// print(youCanBuyItAll)
+
+let allIsOk = "Транзакция прошла успешно! Спасибо за покупку!"
+let noAuth = "Введен неверный пин"
+let noMoney = "Недостаточно средств на счете"
+
+youCanBuyItAll ? print(allIsOk) : authCondition ? print(noMoney) : print(noAuth)
