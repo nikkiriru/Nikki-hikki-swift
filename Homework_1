@@ -1,0 +1,148 @@
+// -----------------
+// 1. Вокруг дачи построили забор. Длина забора составляет х метров, высота у метров. 
+// Сын, Отец и дочь вышли красить забор. Сын покрасил А метров забора, Дочь покрасила в метров забора. 
+// А и В неотрицательрные, А + В < Х. Отец покрасил остальной забор. 
+// Определите, какую площадь забора (В кв.м.) покрасил отец.
+
+var fenceLenght: Double? = 10
+var fenceHeight: Double? = 10
+
+var sonPainted: Double? = 2
+var daughterPainted: Double? = 3
+
+var kidsPainted = sonPainted! + daughterPainted!
+var dadPainted = (fenceLenght! - kidsPainted) * fenceHeight!
+
+print("Отец покрасил \(dadPainted) кв.метров забора")
+
+// -----------------
+// 2. Пилот Формулы 1 завершил гонку за три часа, проехав 90 кругов. Его средняя скорость составила 180 км/ч. 
+// Какова длина одного круга? Ответ в километрах.
+
+let finishTime = 3
+let finishLaps = 90
+let averageSpeed = 180
+
+let allDistance = finishTime * averageSpeed
+let oneLap = allDistance / finishLaps
+
+print("В одном круге \(oneLap) километров")
+
+// -----------------
+// 3. Из пункта А и В навстречу друг другу выехали два поезда.
+// Первый состав двигался со скоростью 140 км/ч. Они встретились в точке С через 3 часа. 
+// С какой скоростью двигался второй состав, если расстояние между пунктами было 960 км?
+
+let firstTrainSpeed = 140
+let meetTime = 3
+let distance = 960
+
+let twoTrainsSpeed = distance / meetTime
+let secondTrainTime = twoTrainsSpeed - firstTrainSpeed
+
+print("Второй поезд ехал со скоростью \(secondTrainTime) км/ч")
+
+// -----------------
+// 4. Дано два числа а и b. Найдите гипотенузу треугольника с заданными катетами.
+
+import Foundation
+
+let cathetus1: Double = 3
+let cathetus2: Double = 4
+
+let cathetus1InSquare = cathetus1 * cathetus1
+let cathetus2InSquare = cathetus2 * cathetus2
+
+let hypotenuse = sqrt(cathetus1InSquare + cathetus2InSquare)
+
+print("Гипотенуза равна \(hypotenuse)")
+
+// -----------------
+// 5. N школьников делят К яблок поровну, неделящийся остаток остается в корзинке. 
+// Сколько яблок достанется каждому школьнику? Сколько яблок останется в корзинке?
+
+let studentsNumber = 11
+let applesNumber = 484
+
+let applesInStudents = applesNumber / studentsNumber
+let applesInBasket = applesNumber % studentsNumber
+
+print("Каждому школьнику досталось яблок - \(applesInStudents)")
+print("В корзинке осталось яблок - \(applesInBasket)")
+
+// -----------------
+// 6. Длина Московской кольцевой автомобильной дороги 109 километров. 
+// Байкер Вася стартует с нулевого километра МКАД и едет со скоростью y километров в час. 
+// На какой отметке он остановится через t часов? 
+// Учтите, что Вася может ехать как по направлению разметки, так и в обратном направлении
+
+let mkadLenght = 109
+let vasyaSpeed = 100
+let stopTime = 1
+
+let stopLenght = vasyaSpeed * stopTime
+let notfinishedMkadLaps = stopLenght % mkadLenght
+
+let markingDirection = notfinishedMkadLaps
+let reverseDirection = mkadLenght - notfinishedMkadLaps
+
+print("Вася остановился на отметке - \(markingDirection) километра если ехал по направлению разметки")
+print("Вася остановился на отметке - \(reverseDirection) километра если ехал в обратном направлении")
+
+// -----------------
+// 7. Представьте службу такси, которая рассчитывает стоимость по следующему принципу:
+// 1 км пути стоит 30 рублей, а одна минута поездки стоит 40 рублей. 
+// Стоимость поездки равна той из сумм, которая окажется больше. 
+// Дано расстояние и время поездки. Рассчитайте стоимость поездки
+
+let kilometrCost = 30
+let minuteCost = 40
+
+let driveKilometrs = 50
+let driveMinutes = 10
+
+let costCompare = (kilometrCost * driveKilometrs) > (minuteCost * driveMinutes)
+let driveCost = costCompare ? (kilometrCost * driveKilometrs) : (minuteCost * driveMinutes)
+
+print("Стоимость поездки - \(driveCost)")
+
+// -----------------
+// 8. Пирожок в столовой стоит в рублей и b копеек. 
+// Определите, сколько рублей и копеек нужно заплатить за n пирожков. 
+
+let pieRub = 10
+let pieKop = 50
+let pieAmount = 5
+
+let kopAmount = pieKop * pieAmount
+let kopCost = kopAmount < 100 ? kopAmount : (kopAmount % 100)
+
+let rubAmount = pieRub * pieAmount
+let rubCost = kopAmount < 100 ? rubAmount : (rubAmount + (kopAmount / 100))
+
+print("Необходимо заплатить \(rubCost) рублей \(kopCost) копеек ")
+
+// -----------------
+// 9. Даны значения двух моментов времени, принадлежащих одним и тем же суткам: 
+// часы, минуты и секунды для каждого из моментов времени. 
+// Известно, что второй момент времени наступил не раньше первого. 
+// Определите, сколько часов, минут и секунд прошло между двумя моментами времени.
+
+let firstHours = 4
+let firstMinutes = 30
+let firstSeconds = 20
+
+let secondHours = 18
+let secondMinutes = 51
+let secondSeconds = 54
+
+let firstTimeInSeconds = firstSeconds + (firstMinutes * 60) + (firstHours * 3600)
+let secondTimeInSeconds = secondSeconds + (secondMinutes * 60) + (secondHours * 3600)
+
+let timeDifferenceInSeconds = secondTimeInSeconds - firstTimeInSeconds
+let diffHours = timeDifferenceInSeconds / 3600
+let diffWithoutHours = timeDifferenceInSeconds - (diffHours * 3600)
+let diffMinutes = diffWithoutHours / 60
+let difSeconds = diffWithoutHours % 60
+
+print("Прошло \(diffHours) часов \(diffMinutes) минут \(difSeconds) секунд ")
