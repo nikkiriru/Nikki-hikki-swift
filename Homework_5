@@ -1,0 +1,194 @@
+// -----------------
+// 1. Представим банк, в котором алгоритм начисления процента по вкладу зависит от суммы вклада. 
+// В функцию в качестве параметра будет подаваться число (сумма вклада), а также количество лет. 
+// При значении меньше 10000, будет начислено 5% ежегодно, 
+// если значение находится в диапазоне от 10000 до 50000 — 7% ежегодно, 
+// если больше 50000, то 10% ежегодно. 
+// Отработав, функция должна вернуть общую сумму с начисленными процентами.
+
+func bankDeposit(depositSum: Double, depositYears: Int) -> String {
+    let coef: (min: Double, ord: Double, max: Double) = (1.05, 1.07, 1.1)
+    var sum = depositSum
+    guard depositSum > 0 else {return "Нужно больше золота"}
+    guard depositYears >= 0 else {return "Время — единственное, что нельзя остановить, вернуть, повторить или изменить"}
+    guard depositYears >= 1 else {return "За такой срок сумма вклада не изменится"}
+    for _ in 1...depositYears {
+        if sum < 10000 { sum *= coef.min }
+        if sum < 50000 { sum *= coef.ord }
+        if sum >= 50000 { sum *= coef.max }
+    }
+    return String(Int(sum))
+}
+
+let myDeposit = bankDeposit(depositSum: 40000, depositYears: 0)
+print(myDeposit)
+
+// -----------------
+// 2. Стрелок стреляет в мишень. 
+// Диаметр центрального круга (10-ки) - 1 см, 
+// толщина каждого кольца мишени - 1 см, всего областей мишени 10 
+// (9 колец и один круг - 10-ка, совмещённая с центром координатной плоскости). 
+// Известны координаты 5-ти попаданий. 
+// Посчитать сумму выбитых очков. 
+// Возможно попадания в «Молоко»
+
+let coordinatesXandY: [(Double?, Double?)] = [(0.5, 1.4),
+                                            (1.7, 1.2),
+                                            (3.7, 5.8),
+                                            (6.1, nil),
+                                            (10, 3.9)]
+
+func targetShootingScore(corXY: [(Double?, Double?)]) -> Int {
+    var score = 0
+    for (corX, corY) in corXY {
+        guard corX != nil && corY != nil else { print("Не все данные получены"); return score }
+        var mainCor: Double = 0
+        var compareCore = corX! >= corY!
+        compareCore ? (mainCor = corX!) : (mainCor = corY!)
+
+        switch mainCor{
+            case -0.5...0.5: score += 10
+            case -1.5...1.5: score += 9
+            case -2.5...2.5: score += 8
+            case -3.5...3.5: score += 7
+            case -4.5...4.5: score += 6
+            case -5.5...5.5: score += 5
+            case -6.5...6.5: score += 4
+            case -7.5...7.5: score += 3
+            case -8.5...8.5: score += 2
+            case -9.5...9.5: score += 1
+            default: score += 0
+        }
+    }
+    return score
+}
+
+let myScore = targetShootingScore(corXY: coordinatesXandY)
+print(myScore)
+
+// -----------------
+// 3. Напишите функцию, которая вычисляет, 
+// и возвращает заданное количество процентов (целочисленное) от заданного числа
+
+func percentageNum(num: Int?, percent: Int?) -> Int {
+    guard num != nil else { print("Не введено значение суммы"); return 0 }
+    guard percent != nil else { print("Не введено значение процента"); return 0 }
+    let perNum = (num! * percent!) / 100
+    return perNum
+}
+
+let myPerNum = percentageNum(num: 2342, percent: 31)
+print(myPerNum)
+
+// -----------------
+// 4. Напишите функцию, предназначенную для вычисления количества пробелов в переданной в качестве параметра строке.
+
+func getGaps(string: String?) -> Int {
+    var gaps = 0
+    guard string != nil else { return 0 }
+    for character in string! {
+        if character == " " {
+            gaps += 1
+        }
+    }
+    return gaps
+}
+
+let myString = getGaps(string: "The fluffy butts wake up me every morning")
+print(myString)
+
+// -----------------
+// 5. Напишите функцию, которая вычисляет 
+// и возвращает отдельно две суммы элементов массива имеющих, четное значение и нечетное
+
+func evenOddSums(numbers: [Int]) -> (evenSums: Int, oddSums: Int) {
+    var evenSums = 0
+    var oddSums = 0
+    let allSums = numbers.reduce(0) { $0 + $1 }
+    for number in numbers where number % 2 == 0 {
+        evenSums += number
+    }
+    oddSums = allSums - evenSums
+    return (evenSums, oddSums)
+}
+
+let myNumbers = Array(1...30)
+let mySums = evenOddSums(numbers: myNumbers)
+print(mySums)
+
+// -----------------
+// 6. Написать функцию isPrime, принимающую 1 аргумент — число от 0 до 1000, 
+// и возвращающую True, если оно простое, и False - иначе.
+
+func isPrime(number: Int) -> Bool {
+    guard number > 0 
+    else {print("0 не является натуральным числом, следовательно и не является простым"); return false}
+    guard number > 1 
+    else {print("1 не является простым числом, а формирует свою специальную категорию — «единицу»"); return false}
+    var numberCount = 0
+    var primeNumber: Bool
+    let allNumbers = Array(2...number)
+    for num in allNumbers {
+        var trialDivision = number % num == 0
+        trialDivision ? (numberCount += 1) : ()
+    }
+    if numberCount == 1 {
+        primeNumber = true
+    } else {
+        primeNumber = false
+    }
+
+    return primeNumber
+}
+
+let myNumber = Int.random(in: 0..<1000)
+print(myNumber)
+let myNumberIsPrime = isPrime(number: myNumber)
+print(myNumberIsPrime)
+
+// -----------------
+// 7. Человек в мебельном магазине хочет купить письменный стол. 
+// Он может донести его до собственной машины сам, 
+// если вес стола не превышает 40 кг либо попросить грузчиков, если его вес больше. 
+// Однако, если стол в упаковке по одной из сторон больше 140 см, а по другой - больше 70 см, 
+// придётся заказывать доставку, так как стол в собственную машину не поместится. 
+// Напишите функцию, которая принимает вес и габариты стола и сообщает, как именно будет доставлен стол - 
+// собственноручно, с помощью грузчиков или с помощью доставки?
+
+func deliveryCheck(weight: Int, longSide: Int, shortSide: Int) -> String {
+    let delivery = "Товар будет доставлен с помощью доставки"
+    let movers = "Товар будет доставлен с помощью грузчиков"
+    let independently = "Товар будет доставлен самостоятельно покупателем"
+    let maxWeight = 40
+    let maxLongSide = 140
+    let maxShortSide = 70
+    var resultWay: String
+
+    let sideCondition = longSide > maxLongSide || shortSide > maxShortSide
+    let weightSideCondition = longSide <= maxLongSide && shortSide <= maxShortSide && weight <= maxWeight
+    if weightSideCondition == true { resultWay = independently } 
+    else {
+        sideCondition ? (resultWay = delivery) : (resultWay = movers)
+      }
+    return resultWay
+}
+
+let myCheck = deliveryCheck(weight: 110, longSide: 70, shortSide: 150)
+print(myCheck)
+
+// -----------------
+// 8. Создать функцию, принимающую в себя массив результатов каких-либо измерений (дробные числа), 
+// вычисляющую среднее значение и возвращающую массив отклонений результатов от среднего значения.
+
+func arrayDeviation(array: [Double]) -> [Double] {
+    let arrayCount = array.count
+    let arraySum = array.reduce(0) { $0 + $1 }
+    let arrayAverage = arraySum / Double(arrayCount)
+    var arrDev = array.map { $0 - arrayAverage }
+
+    return arrDev
+}
+
+let myArr = [21.1, 22.1]
+let myArrDev = arrayDeviation(array: myArr)
+print(myArrDev)
