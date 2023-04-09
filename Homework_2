@@ -1,0 +1,154 @@
+// -----------------
+// 1. Есть массив целых чисел, надо проверить, 
+// сумма первого и последнего элементов делится ли на 5-й элемент. 
+// Если да, то первый элемент сделать такой же как 3й, 
+// а 4й поменять местами со 2м. 
+// Программа должна отработать без ошибки при любом количестве элементов
+
+var natNumbers: [Int] = [4, 3, 1, 8, 5, 9, 7, 2, 6, 16]
+var firstNumber = natNumbers.first!
+var lastNumber = natNumbers.last!
+var fifthNumber = natNumbers[4]
+var firstPlusLast = firstNumber + lastNumber
+var condition = firstPlusLast % fifthNumber == 0
+condition ? natNumbers[0] = natNumbers[2] : ()
+condition ? natNumbers.swapAt(1, 3) : ()
+
+print(natNumbers)
+
+// -----------------
+// 2. В строковом массиве содержатся два элемента марки - автомобилей. 
+// Требуется проверить, в алфавитном ли порядке они расположены. 
+// Если нет, поменять их местами. 
+// Также требуется вывести в консоль название автомобиля с Минимальным количеством символов
+
+var marks: [String] = ["Volvo", "Audi"]
+var sortedMarks = marks == marks.sorted() ? marks : marks.sorted()
+
+print(sortedMarks)
+print(sortedMarks.min()!)
+
+// -----------------
+// 3. Есть массив с цифрами от 2 до 9. 
+// Требуется, используя этот массив, вывести произвольную (случайную, рандомную) 
+// строку из таблицы умножения ПРИМЕР: 2 * 2 = 4
+
+var numbers: [Int] = [2, 3, 4, 5, 6, 7, 8, 9]
+
+var randomNumber1 = numbers.randomElement()!
+var randomNumber2 = numbers.randomElement()!
+var multiplicatedNumbers = randomNumber1 * randomNumber2
+
+print("Пример из таблицы умножения - \(randomNumber1) * \(randomNumber2) = \(multiplicatedNumbers)" )
+
+// -----------------
+// 4. Два человека соревнуются в троеборье, которое состоит из подтягивания, подъёмов туловища и приседаний. 
+// Результаты записываются в виде кортежей отдельно для каждого игрока. 
+// За 1 подтягивание атлет получает 70 очков, за подъём туловища - 45 очков, а за приседание 50 очков. 
+// Создайте такие - кортежи и заполните их значениями. Определите победителя в состязании.
+
+var firstAthlete = (10, 10, 10)
+var secondAthlete = (10, 10, 10)
+var points = (70, 45, 50)
+
+let firstPullUpsPoints = firstAthlete.0 * points.0
+let firstLiftUpsPoints = firstAthlete.1 * points.1
+let firstSitUpsPoints = firstAthlete.2 * points.2
+
+let secondPullUpsPoints = secondAthlete.0 * points.0
+let secondLiftUpsPoints = secondAthlete.1 * points.1
+let secondSitUpsPoints = secondAthlete.2 * points.2
+
+let firstAthletePoints = firstPullUpsPoints + firstLiftUpsPoints + firstSitUpsPoints
+let secondAthletePoints = secondPullUpsPoints + secondLiftUpsPoints + secondSitUpsPoints
+
+let equalPoints = firstAthletePoints == secondAthletePoints
+let firstAthleteWins = firstAthletePoints > secondAthletePoints
+let secondAthleteWins = firstAthletePoints < secondAthletePoints
+
+equalPoints ? print("Победила дружба! =^-^=") : ()
+firstAthleteWins ? print("Победитель - Первый атлет, Вася! =^-^=") : ()
+secondAthleteWins ? print("Победитель - Второй атлет, Ваня! =^-^=") : ()
+
+// -----------------
+// 5. Данные об успеваемости учеников по математике хранятся в массиве кортежей в формате Фамилия оценка. 
+// Требуется: Отсортировать массив по успеваемости в порядке от лучших оценок к худшим.
+// Отсортировать массив в обратном алфавитном порядке. 
+// Сформировать массив проблемных учеников, у которых оценки ниже, чем «4».
+// Найти средний балл в классе
+
+var pupilMath: [(surname: String, score: Int)] = [("Smith", 4),
+                                                  ("Holopainen", 3),
+                                                  ("Ivanov", 4),
+                                                  ("Li", 5),
+                                                  ("Koncz", 3),
+                                                  ("Adamaytes", 4),
+                                                  ("Sakurai", 5),
+                                                  ("Galiano", 5),
+                                                  ("Brkanić", 3),
+                                                  ("Wantz", 5)
+]
+
+// Обратный алфавитный порядок:
+let sortedDesc = pupilMath.sorted(by: >)
+print(sortedDesc)
+
+// По успеваемости:
+let sortedScore = pupilMath.sorted(by:{ $0.1 > $1.1 })
+print(sortedScore)
+
+// Список худших:
+let worstScore = pupilMath.filter { $0.1 < 4 }
+print(worstScore)
+
+// Средний балл:
+let sumScore = pupilMath.reduce(0) { $0 + $1.score }
+let averageScore = sumScore / pupilMath.count
+print(averageScore)
+
+// -----------------
+// 6. Покупатель стоит на кассе с корзинкой продуктов. Корзинка представлена в виде массива. 
+// Элемент массива - кортеж, содержащий в себе название, цену и количество продукта данной позиции.
+// Посчитайте стоимость продуктов в корзине.
+// Определите, за какой из продуктов покупатель заплатит больше всего.
+// Отсортируйте продукты в порядке убывания стоимости
+
+var groceries: [(name: String, price: Int, quantity: Int)] = [("Milk", 90, 5),
+                                                              ("Juice", 140, 2),
+                                                              ("Cereal", 93, 1),
+                                                              ("Cheese", 189, 1),
+                                                              ("Sausage", 314, 2),
+                                                              ("Cookies", 49, 3),
+                                                              ("Bacon", 459, 2),
+                                                              ("Coffee", 219, 1),
+                                                              ("Rice", 120, 2),
+                                                              ("Pate", 50, 4)
+]
+
+// let eachCost = groceries.map { $0.price * $0.quantity}
+// print(eachCost)
+// let allCost = eachCost.reduce(0) {$0 + $1}
+// print(allCost)
+
+let allCost = groceries.reduce(0) { $0 + $1.price * $1.quantity}
+print(allCost)
+
+let mostExpensive = groceries.max { a, b in a.price * a.quantity < b.price * b.quantity }
+print(mostExpensive!)
+
+let groceriesSorted = groceries.sorted(by: {$0.price > $1.price})
+print(groceriesSorted)
+
+// -----------------
+// 7. Есть три массива массив с фамилиями учеников, массив с их оценками по математике и массив с их оценками по биологии. 
+// Заранее известно, что количество элементов во всех массивах одинаковое. Требуется получить массив, содержащий строки вида:
+// <<Пупкин получил 5 по математике и 3 по биологии»
+
+let surnames: [String] = ["Apelsinov", "Dynkin", "Ejevikin", "Klubnikin", "Limonov"]
+let mathScore: [Int] = [3, 2, 5, 5, 3]
+let biologyScore: [Int] = [5, 4, 5, 3, 4]
+
+let combined = zip(surnames, zip(mathScore, biologyScore)).map { ($0.0, $0.1.0, $0.1.1) }
+print(combined)
+combined.forEach {
+        print("\($0.0) получил \($0.1) по математике и \($0.2) по биологии")}
