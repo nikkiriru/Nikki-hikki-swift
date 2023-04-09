@@ -1,0 +1,218 @@
+// -----------------
+// 1. В первый день спортсмен пробежал х километров, 
+// а затем он каждый день увеличивал пробег на 10% от предыдущего значения. 
+// По данному числу у определите номер дня, 
+// на который пробег спортсмена составит не менее у километров.
+
+var lastDayKilometrs: Double = 1
+let needKilometrs: Double = 50
+var countDays = 1
+while lastDayKilometrs < needKilometrs {
+    lastDayKilometrs = lastDayKilometrs + 0.1 * lastDayKilometrs
+    countDays += 1
+}
+print("На \(countDays) день спортсмен пробежал не менее \(Int(needKilometrs)) километров")
+
+// -----------------
+// 2. Вклад в банке составляет х рублей. 
+// Ежегодно он увеличивается на р процентов, после чего дробная часть копеек отбрасывается. 
+// Каждый год сумма вклада становится больше. 
+// Определите, через сколько лет вклад составит не менее у рублей.
+
+var depositSum = 10000
+let percentage = 10
+let needSum = 100000
+var depositYears = 0
+
+while depositSum < needSum {
+    var depositPercentage = (depositSum * percentage) / 100
+    depositSum = depositSum + depositPercentage
+    depositYears += 1
+}
+print("Через \(depositYears) лет вклад составит не менее \(needSum) рублей")
+
+// -----------------
+// 3. Известно число жителей, проживающих в каждом доме улицы. 
+// Нумерация домов проведена подряд. 
+// Дома с нечетными номерами расположены на одной стороне улицы, с четными - на другой. 
+// На какой стороне улицы проживает больше жителей? 
+// Использовать только один оператор цикла.
+
+// Если в каждом доме одинаковое количество жителей:
+let eachHouse = 10
+let numberOfHouse = 50
+let allHouseNumeration = 1...50
+
+var oddHouseCount = 0
+
+for house in allHouseNumeration where house % 2 == 1 {
+    oddHouseCount += 1
+}
+let evenHouseCount = numberOfHouse - oddHouseCount
+let peopleInOdd = oddHouseCount * eachHouse
+let peopleInEven = evenHouseCount * eachHouse
+
+var peopleCountSame = peopleInEven == peopleInOdd
+var peopleCountCompare = peopleInOdd > peopleInEven
+
+let ifEqual = "Количество жителей на нечетной стороне такое же, как и количество жителей на четной"
+let oddMore = "Количество жителей на нечетной стороне больше"
+let evenMore = "Количество жителей на четной стороне больше"
+
+peopleCountSame ? print(ifEqual) : peopleCountCompare ? print(oddMore) : print(evenMore)
+
+// Если в каждом доме разное количество жителей:
+let ourStreet: [(houseNumber: Int, people: Int)] = [(1, 10), (2, 12), (3, 11), (4, 12), (5, 11), 
+                                                    (6, 10), (7, 12), (8, 9), (9, 13), (10, 14)]
+
+let allPeople = ourStreet.reduce(0) {$0 + $1.people}
+var evenPeople = 0
+var oddPeople = 0
+
+for (houseNumber, people) in ourStreet where houseNumber % 2 == 0 {
+    evenPeople = evenPeople + people
+}
+oddPeople = allPeople - evenPeople
+
+peopleCountSame = oddPeople == evenPeople
+peopleCountCompare = oddPeople > evenPeople
+
+peopleCountSame ? print(ifEqual) : peopleCountCompare ? print(oddMore) : print(evenMore)
+
+// -----------------
+// 4. Известны стоимости (в долларах) нескольких марок легковых автомобилей и мотоциклов. 
+// Верно ли, что средняя стоимость автомобилей превышает среднюю стоимость мотоциклов более чем в 3 раза?
+
+var autoMarks: [(mark: String, cost: Int)] = [
+    ("BMW", 63770),
+    ("Audi", 33990),
+    ("Nissan", 32450)
+]
+var motoMarks: [(mark: String, cost: Int)] = [
+    ("Husqvarna", 11300),
+    ("KTM", 21690),
+    ("Yamaha", 36720)
+]
+
+let allAutoCost = autoMarks.reduce(0) {$0 + $1.cost}
+let allMotoCost = motoMarks.reduce(0) {$0 + $1.cost}
+
+let averageAutoCost = allAutoCost / autoMarks.count
+let averageMotoCost = allMotoCost / motoMarks.count
+
+let autoThanMoto = averageAutoCost / averageMotoCost
+
+if autoThanMoto > 3 {
+    print("Для выбранных марок автомобилей и мотоциклов - утверждение верно")
+} else {
+    print("Для выбранных марок автомобилей и мотоциклов - утверждение не верно")
+}
+
+// -----------------
+// 5. Известен возраст группы людей в списке. 
+// Какой человек указан в списке раньше: самый старший или самый молодой?
+
+let peopleInList: [(name: String, age: Int)] = [
+    ("Alla", 54),
+    ("Ben", 13),
+    ("Carl", 34),
+    ("Daniel", 30),
+    ("Eiko", 49),
+    ("Frank", 31),
+    ("George", 33),
+    ("Harry", 7),
+    ("Irina", 61),
+    ("Jannie", 89),
+    ("Karen", 18),
+    ("Luis", 55),
+    ("Marry", 41),
+    ("Nathan", 5),
+    ("Oleg", 47),
+    ("Peter", 11),
+    ("Ron", 19),
+    ("Satoshi", 22),
+    ("Tayller", 30),
+    ("Umar", 74),
+    ("Vlad", 28),
+    ("Wendy", 15),
+    ("Xena", 59),
+    ("Yukioru", 24),
+    ("Zary", 16)
+]
+
+let youngest = peopleInList.min { $0.age < $1.age }
+let oldest = peopleInList.max { $0.age < $1.age }
+
+var countYoungest = 0
+var countOldest = 0
+
+for (name, age) in peopleInList {
+if (name, age) < youngest! {
+    countYoungest += 1
+} else {
+    break}
+}
+
+for (name, age) in peopleInList {
+if (name, age) < oldest! {
+    countOldest += 1
+} else {
+    break}
+}
+
+let oldestFirst = "В списке раньше указан самый старший"
+let youngestFirst = "В списке раньше указан самый младший"
+
+let ageCompare = countOldest < countYoungest
+ageCompare ? print(oldestFirst) : print(youngestFirst)
+
+// -----------------
+// 6. Размеры нескольких параллелепипедов (длина, ширина, высота) хранятся в массиве кортежей. Определить:
+// а) максимальный объем фигуры;
+// б) минимальный объем фигуры;
+// в) индекс фигуры, имеющей максимальный объем; 
+// г) индекс фигуры, имеющей минимальный объем.
+
+let parallelepipeds: [(lenght: Int, width: Int, height: Int)] = [
+    (10, 5, 11),
+    (12, 3, 9),
+    (1, 4, 13),
+    (14, 7, 2),
+    (6, 8, 15)
+]
+let volumes: [Int] = parallelepipeds.map{
+    $0.lenght * $0.width * $0.height
+}
+
+let parMin = volumes.min { $0 < $1 }
+let parMax = volumes.max { $0 < $1 }
+
+for (index, volume) in volumes.enumerated() {
+    if volume == parMin! {
+        print("Минимальный объем у параллелепипеда с индексом \(index), и составляет \(parMin!) кубических сантиметров")
+    }
+    if volume == parMax! {
+        print("Максимальный объем у параллелепипеда с индексом \(index), и составляет \(parMax!) кубических сантиметров")
+    }
+}
+
+// -----------------
+// 7. Найти среднее арифметическое четных положительных элементов массива, стоящих на нечетных позициях
+
+let numbers = Array(-10...10).shuffled()
+
+var sum = 0
+var count = 0
+var average = 0
+
+for (index, number) in numbers.enumerated() where index % 2 == 1{
+    let even = number % 2 == 0
+    let notBelowZero = number > 0
+    if even && notBelowZero {
+        sum = sum + number
+        count += 1
+    }
+}
+
+average = sum / count
+print("Среднее арифметическое четных положительных элементов массива, стоящих на нечетных позициях = \(average)")
