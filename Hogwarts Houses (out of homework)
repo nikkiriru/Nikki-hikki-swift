@@ -1,0 +1,23 @@
+// Hello, my friend! Please, write your favorite Hogwarts House (gryffindor/hufflepuff/ravenclaw/slytherin)
+// And then write how many points does your house need for win :3
+
+let house = readLine()
+
+switch house{
+    case "gryffindor": 
+    var gPoints = readLine()
+    print ("\(Int(gPoints!)! + 1000) points to Griffindor!!!")
+    case "hufflepuff": 
+    let hPoints = readLine()
+    var gPoints = Int(hPoints!)! + 1000
+    print("\(hPoints!) points to Hufflepuff! BUT!!! \(gPoints) points to Griffindor!")
+    case "ravenclaw":
+    let rPoints = readLine()
+    var gPoints = Int(rPoints!)! + 1000
+    print("\(rPoints!) points to Ravenclaw! BUT!!! \(gPoints) points to Griffindor!")    
+    case "slytherin":
+    let sPoints = readLine()
+    var gPoints = Int(sPoints!)! + 1000
+    print("\(sPoints!) points to Slytherin! BUT!!! \(gPoints) points to Griffindor!")   
+    default: print ("Maybe you have a mistake in name of the Hogwarts House")
+}
