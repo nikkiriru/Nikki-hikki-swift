@@ -155,7 +155,7 @@ print(myNumberIsPrime)
 // Напишите функцию, которая принимает вес и габариты стола и сообщает, как именно будет доставлен стол - 
 // собственноручно, с помощью грузчиков или с помощью доставки?
 
-func deliveryCheck(weight: Int, longSide: Int, shortSide: Int) -> String {
+func deliveryCheck(weight: inout Int, longSide: inout Int, shortSide: inout Int) -> String {
     let delivery = "Товар будет доставлен с помощью доставки"
     let movers = "Товар будет доставлен с помощью грузчиков"
     let independently = "Товар будет доставлен самостоятельно покупателем"
@@ -163,7 +163,11 @@ func deliveryCheck(weight: Int, longSide: Int, shortSide: Int) -> String {
     let maxLongSide = 140
     let maxShortSide = 70
     var resultWay: String
-
+    let sideCompare = longSide > shortSide
+    if sideCompare == false { 
+        var someSide = longSide
+        longSide = shortSide
+        shortSide = someSide}
     let sideCondition = longSide > maxLongSide || shortSide > maxShortSide
     let weightSideCondition = longSide <= maxLongSide && shortSide <= maxShortSide && weight <= maxWeight
     if weightSideCondition == true { resultWay = independently } 
@@ -173,7 +177,10 @@ func deliveryCheck(weight: Int, longSide: Int, shortSide: Int) -> String {
     return resultWay
 }
 
-let myCheck = deliveryCheck(weight: 110, longSide: 70, shortSide: 150)
+var myWeight = 10
+var myLongSide = 69
+var myShortSide = 139
+let myCheck = deliveryCheck(weight: &myWeight, longSide: &myLongSide, shortSide: &myShortSide)
 print(myCheck)
 
 // -----------------
