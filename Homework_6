@@ -1,0 +1,194 @@
+// -----------------
+// 1. Создать функцию, которая принимает в себя имя пользователя и замыкание, 
+// которое распечатывает в консоль строку - приветствие пользователя. 
+// Создать три замыкания: Первое - распечатывает строку приветствия для нового пользователя, 
+// второе для гостя, третье для старого пользователя. 
+// Проверить работу всего кода вызовом функции. 
+
+func greetings(name: String, action:() -> ()) -> () {
+    print("Hello, \(name)!"); action()
+}
+let greetGuest = {print("You can log in to write here, but you can still read without loging")}
+let greetNew = {print("We are always glad to newcomers! How it's going?")}
+let greetOld = {print("Haven't seen you for a long time! What's new?")}
+
+let myName1 = greetings(name: "Guest", action: greetGuest)
+let myName2 = greetings(name: "Jane", action: greetNew)
+let myName3 = greetings(name: "Carl", action: greetOld)
+
+// -----------------
+// 2. Создать функцию, которая принимает в себя длину и ширину прямоугольника 
+// и замыкание-действие типа (Double, Double)-> Double и возвращает дробное число. 
+// Создать два замыкания- действия, которые вычисляют площадь и периметр. 
+// Вызвать функцию и проверить работу кода 
+
+func rectangle(lenght: Double, width: Double, action: (Double, Double) -> Double) -> Double {
+    let rec = action(lenght, width)
+    return rec
+}
+let perimeter = {(lenght: Double, width: Double) -> Double in
+    return 2*(lenght + width)}
+
+let square = {(lenght: Double, width: Double) -> Double in
+    return lenght * width}
+
+let myBox = rectangle(lenght: 10, width: 5, action: square)
+print(myBox)
+
+// -----------------
+// 3. Реализовать три замыкания, которые принимают два числа и возвращают Bool. 
+// Первое вычисляет, может ли первое число быть нацело поделено на второе. 
+// Второе вычисляет, имеют ли они хотя бы один общий делитель, отличный от 1 и самих этих чисел. 
+// Третье вычисляет, чётная ли сумма этих двух чисел. 
+// Реализуйте функцию, которая принимает два числа и такого типа замыкание, 
+// внутри себя реализует его и возвращает результат в виде будимого значения
+
+func numbersCheck(number1: Int, number2: Int, action: (Int, Int) -> Bool) -> Bool{
+    let check = action(number1, number2)
+    return check
+}
+
+let intDivide = {(number1: Int, number2: Int) -> Bool in
+    return number1 % number2 == 0}
+
+let commDivisor = {(number1: Int, number2: Int) -> Bool in
+    let numArray = [number1, number2]
+    let minNum = numArray.min()
+    var divideCount = 0
+    for numbers in 2..<minNum! {
+        let compare1 = number1 % numbers == 0
+        let compare2 = number2 % numbers == 0
+        if compare1 == compare2 {divideCount += 1}
+    }
+    return divideCount >= 1 }
+
+let evenSum = {(number1: Int, number2: Int) -> Bool in
+    let nums = number1 + number2
+    return nums % 2 == 0}
+
+let myNumbers = numbersCheck(number1: 12, number2: 8, action: evenSum)
+print(myNumbers)
+
+// -----------------
+// 4. Составить замыкание для поиска четырехзначных чисел, 
+// которые при делении на 133 дают в остатке 125, а при делении на 134 дают в остатке 111
+
+let fourDigitSearch = {() -> [Int] in 
+    var fourDigitSet: [Int] = []
+    for fourDigit in 1000...9999{
+        let fourDigitCondition133 = fourDigit % 133 == 125
+        let fourDigitCondition134 = fourDigit % 134 == 111
+
+        if fourDigitCondition133 && fourDigitCondition134 {
+            fourDigitSet.append(fourDigit)
+        } 
+    }
+    return fourDigitSet
+}
+
+print(fourDigitSearch())
+
+// -----------------
+// 5. Даны два слова. 
+// Создать замыкание, которая определит, можно ли из букв первого из них получить второе. 
+// Каждая буква второго слова должна входить в первое слово столько же раз или меньше, чем и во втором.
+
+let firstWord = "access"
+let secondWord = "Ass"
+
+let wordINword = {(word1: String, word2: String) -> Bool in
+    let lowerWord1 = word1.lowercased()
+    let lowerWord2 = word2.lowercased()
+    let letters1 = lowerWord1.reduce(into: [:]) { counts, letter in
+    counts[letter, default: 0] += 1}
+    let letters2 = lowerWord2.reduce(into: [:]) { counts, letter in
+    counts[letter, default: 0] += 1}
+
+    let compareLetters = letters2.keys.allSatisfy{letters1.keys.contains($0)} 
+    let compareCount = letters2.values.allSatisfy{letters1.values.contains($0)}
+    let compare = compareLetters && compareCount
+
+    return compare
+}
+
+let myWord = wordINword(firstWord, secondWord)
+print(myWord)
+
+// -----------------
+// 6. Создать функцию, которая принимает в себя строку и замыкание типа (String)->(Bool), 
+// реализующую внутри себя принятое замыкание и печатающую результат в консоль.
+// Создать замыкания типа (String) -> (Bool):
+// - Проверяет, чётное ли количество символов в строке, за исключением пробелов
+// - Проверяет, является ли строка палиндромом (читается в в прямом и обратном порядке одинаково)
+// - Проверяет, есть ли в строке символы кроме букв и пробелов 
+// Вызвать функцию, протестировав её с разными строками и замыканиями
+
+func wordsChecker(checkingString: String, checker:(String) -> Bool) -> () {
+    let wordCheck = checker(checkingString)
+    print(wordCheck)
+}
+
+let evenChars = {(checkingString: String) -> Bool in
+    let stringWithoutSpaces = checkingString.filter { $0 != " " }
+    let evenCondition = stringWithoutSpaces.count % 2 == 0
+    return evenCondition
+}
+
+let palindromic = {(checkingString: String) -> Bool in
+    let palindrome = String(checkingString.reversed()) == checkingString
+    return palindrome
+}
+
+let validChars = {(checkingString: String) -> Bool in
+    let bigLetters = (0..<26).map { i in Character(UnicodeScalar(i + 65)) }
+    let smallLetters = (0..<26).map { i in Character(UnicodeScalar(i + 97)) }
+    let space = " "
+    let validCharacters = bigLetters + smallLetters + space
+    let compareLetters = checkingString.allSatisfy{validCharacters.contains($0)}
+    return compareLetters
+}
+
+let myString = "tacocat"
+wordsChecker(checkingString: myString, checker: palindromic)
+
+// -----------------
+// 7. Реализовать функцию, принимающую в себя дробное число Double и возвращающую дробное число. 
+// Создать замыкания типа (Double)-> Double:
+// - Вычисляет и возвращает площадь граней куба со стороной, переданной в качестве параметра
+// - Вычисляет периметр квадрата со стороной, переданной в качестве параметра
+// - Вычисляет объём шара с радиусом, переданным в качестве параметра
+// - Вычисляет площадь сферы с диаметром, переданным в качестве параметра
+// Если в функцию передано отрицательное число, поменять знак на противоположный (взять число по модулю)
+// Вызвать функцию, протестировав её с разными числами и замыканиями
+
+func greatСalc(float: Double, calc: (Double) -> Double) -> Double {
+    var notMinus = 0.0
+    let notMinusCondition = float >= 0
+    notMinusCondition ? (notMinus = float) : (notMinus = -float)
+    let calcIt = calc(notMinus)
+    return calcIt
+}
+
+let cubeArea = {(edge: Double) -> Double in
+    let area = edge * edge
+    return area
+}
+
+let squarePerimeter = {(edge: Double) -> Double in
+    let perimeter = edge * 4
+    return perimeter
+}
+
+let sphereVolume = {(radius: Double) -> Double in
+    let volume = (4 / 3) * Double.pi * (radius * radius * radius)
+    return volume
+}
+
+let sphereArea = {(diameter: Double) -> Double in
+    let area = Double.pi * (diameter * diameter)
+    return area
+}
+
+let myFloat = -10.0
+let myCalc = greatСalc(float: myFloat, calc: sphereArea)
+print(myCalc)
