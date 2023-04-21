@@ -1,0 +1,253 @@
+// Создайте класс Автомобиль
+// Определите свойства - название, год выпуска, количество бензина, пробег, 
+// средний расход топлива, объём бака, максимальная масса
+// Определите вычисляемое свойство «Старое ли авто». 
+// Старым считать автомобиль, год выпуска которого на 15 меньше, чем текущий - 2023
+// Проинициализируйте определённые в классе свойства с помощью обычной инициализации
+// Определите методы «двигаться», «об этом ТС», заполнение и «заправка»
+// Метод Двигаться принимает количество км, добавляет их в пробег, 
+// а также уменьшает  количество топлива, согласно показателю среднего расхода. 
+// В консоль выводится сообщение «\(название) проехал \(дистанция) км»
+// Метод «об этом ТС» распечатывает информацию об автомобиле
+// Метод «заправка» принимает количество литров топлива и добавляет это количество в бак. 
+// Помните, что в бак не поместится больше его объёма
+// Метод «заполнение» выводит абстрактное сообщение, что производится заполнение автомобиля полезным грузом
+// Создайте наследников автомобиля - грузовой, автобус
+// Определите дополнительные свойства для грузового - грузоподъёмность и вычисляемое - собственная масса ТС.
+// Для автобуса - количество пассажиров и вычисляемое - собственная масса ТС. 
+// Для расчёта собственной массы в том случае принять вес 1 пассажира равным 85 кг.
+// Переопределите метод заполнения для дочерних классов. 
+// Автобус должен при вызове этого метода заполнять свои свободные места на 10 человек(но не более, чем вместимость)
+// Грузовик - заполнять кузов на 300 кг (но не более вместимости кузова).
+// Перегрузите метод заполнения в дочерних классах с указанием конкретного количества загрузки пассажиров или груза соответственно
+// Со звёздочкой:
+// Создайте класс Водитель со свойствами имя и количество денег (приватное).
+// Доработайте класс Автомобиль для взаимодействия с водителем:
+// - У Автомобиля должен появиться водитель (свойство)
+// - Метод Заправка теперь должен, помимо прочего, вычитать из денег Водителя сумму за бензин. 
+// Конечно, если у него хватит денег
+
+import Foundation
+
+class Driver {
+    let driverName: String
+    fileprivate var driverWallet: Double
+
+    init(driverName: String, driverWallet: Double){
+        self.driverName = driverName
+        self.driverWallet = driverWallet
+    }
+}
+
+class Vehicle {
+    let name: String
+    let issueYear: Int
+    var gasAmount: Double
+    var mileage: Double
+    var averageFuel: Double
+    let tankVolume: Double
+    let maxWeight: Int
+    let driver: Driver
+
+    var oldCar: String {
+        let date = Date()
+        let calendar = Calendar.current
+        let thisYear = calendar.component(.year, from: date)
+        let howMuchYears = thisYear - issueYear
+        switch howMuchYears > 15{
+            case true: return "\(name) is an old car"
+            case false: return "\(name) is not so old car"
+        }
+    }
+
+    init(name: String, 
+        issueYear: Int, 
+        gasAmount: Double, 
+        mileage: Double, 
+        averageFuel: Double, 
+        tankVolume: Double, 
+        maxWeight: Int,
+        driver: Driver) {
+            self.name = name
+            self.issueYear = issueYear
+            self.gasAmount = gasAmount
+            self.mileage = mileage
+            self.averageFuel = averageFuel
+            self.tankVolume = tankVolume
+            self.maxWeight = maxWeight
+            self.driver = driver
+        }
+
+    func move(kilometrs: Double) -> () {
+        mileage += kilometrs
+        let wastedGas = (kilometrs * averageFuel) / 100
+        gasAmount -= wastedGas
+        return print("\(name) drove \(kilometrs) km")
+    }
+
+    func about() -> () {
+        print("""
+        Vehicle name - \(name)
+        Vehicle's production date - \(issueYear)
+        The amount of petrol in the tank - \(gasAmount)
+        Vehicle mileage - \(mileage)
+        Average fuel consumption per 100km - \(averageFuel)
+        Fuel Tank Capacity - \(tankVolume)
+        Maximum vehicle weight - \(maxWeight)
+        """)
+    }
+
+    func refueling(gas: Double) -> () {
+        let petrolPerLiter = 50.0
+        let dieselPerLiter = 65.0
+        let fuelPerLiter: Double
+        if maxWeight < 3000 {
+            fuelPerLiter = petrolPerLiter
+        } else {fuelPerLiter = dieselPerLiter}
+        var howMuchGas = 0.0
+        let compareGas = gas > (tankVolume - gasAmount)
+        compareGas ? (howMuchGas = tankVolume - gasAmount) : (howMuchGas = gas)
+        let howMuchMoney = howMuchGas * fuelPerLiter
+        guard howMuchMoney < driver.driverWallet else {return print("Not enough money!")}
+        driver.driverWallet -= howMuchMoney
+
+        guard gasAmount != tankVolume else {
+            return print("Your gas tank is already full!")
+            }
+        guard (gas + gasAmount) <= tankVolume else {         
+            gasAmount = tankVolume
+            return print("Too much fuel! Will be filled up to a full tank")
+            }
+        
+        gasAmount += gas
+        return print("Your gas tank has \(gasAmount) liters of gasoline now!")
+    }
+
+    func loading() -> () {
+        return print("The vehicle is filled with payload")
+    }
+}
+
+class Truck: Vehicle {
+    var loadCapacity: Int
+
+    var truckWeight: Int { 
+        let tw = maxWeight - loadCapacity
+        return tw
+        }
+
+    init(name: String, 
+        issueYear: Int, 
+        gasAmount: Double, 
+        mileage: Double, 
+        averageFuel: Double, 
+        tankVolume: Double, 
+        maxWeight: Int,
+        driver: Driver,
+        loadCapacity: Int) {
+            self.loadCapacity = loadCapacity
+            super.init(name: name, 
+                        issueYear: issueYear, 
+                        gasAmount: gasAmount, 
+                        mileage: mileage, 
+                        averageFuel: averageFuel, 
+                        tankVolume: tankVolume, 
+                        maxWeight: maxWeight,
+                        driver: driver)
+        }
+
+    override func loading() -> () {
+        let numLoad = 300
+        guard loadCapacity > 0 else {return print("There is no more free space in the truck")}
+        guard numLoad <= loadCapacity else {
+            let maxLoadNow = numLoad - loadCapacity
+            loadCapacity -= maxLoadNow
+            return print("The truck can only carry \(maxLoadNow) kilograms now. The remaining cargo will be transported tomorrow.")
+        }
+        loadCapacity -= numLoad
+        return print("There are \(loadCapacity) kilograms of free space left in the truck.")
+    }
+
+    func loading(load: Int) -> () {
+        return print("The truck is loaded with \(load) kilograms.")
+    }
+}
+
+class Bus: Vehicle {
+    var numberOfPassengers: Int
+    let onePassengerWeight: Int = 85
+
+    var busWeight: Int { 
+        let bw = maxWeight - (numberOfPassengers * onePassengerWeight)
+        return bw
+        }
+    
+    init(name: String, 
+        issueYear: Int, 
+        gasAmount: Double, 
+        mileage: Double, 
+        averageFuel: Double, 
+        tankVolume: Double, 
+        maxWeight: Int,
+        driver: Driver,
+        numberOfPassengers: Int) {
+            self.numberOfPassengers = numberOfPassengers
+            super.init(name: name, 
+                        issueYear: issueYear, 
+                        gasAmount: gasAmount, 
+                        mileage: mileage, 
+                        averageFuel: averageFuel, 
+                        tankVolume: tankVolume, 
+                        maxWeight: maxWeight,
+                        driver: driver)
+        }
+
+    override func loading() -> () {
+        let numLoad = 10
+        guard numberOfPassengers > 0 else {return print("There are no more seats on the bus")}
+        guard numLoad <= numberOfPassengers else {
+            let maxLoadNow = numLoad - numberOfPassengers
+            numberOfPassengers -= maxLoadNow
+            return print("The bus can only carry \(maxLoadNow) people. The other people have to wait for the next bus.")
+        }
+        numberOfPassengers -= numLoad
+        return print("There are \(numberOfPassengers) seats left on the bus.")
+    }
+
+    func loading(passengers: Int) -> () {
+        return print("There are \(passengers) passengers on the bus already!")
+    }
+}
+
+let stepan = Driver(driverName: "Stepan", driverWallet: 6500.34)
+let boris = Driver(driverName: "Boris", driverWallet: 18100.19)
+let mark = Driver(driverName: "Mark", driverWallet: 78900.76)
+
+let pazik = Bus(name: "Pazik",
+                issueYear: 1989,
+                gasAmount: 10.2,
+                mileage: 26040.2,
+                averageFuel: 18.1,
+                tankVolume: 105.0,
+                maxWeight: 7500,
+                driver: stepan,
+                numberOfPassengers: 45)
+
+let scania = Truck(name: "Scania",
+                    issueYear: 2012,
+                    gasAmount: 0.5,
+                    mileage: 49400.1,
+                    averageFuel: 23.25,
+                    tankVolume: 500.0,
+                    maxWeight: 49000,
+                    driver: boris,
+                    loadCapacity: 39270)
+
+let nissan = Vehicle(name: "Nissan",
+                    issueYear: 2021, 
+                    gasAmount: 5.0, 
+                    mileage: 964.8, 
+                    averageFuel: 6.4, 
+                    tankVolume: 55.0, 
+                    maxWeight: 1500,
+                    driver: mark)
