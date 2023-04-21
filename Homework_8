@@ -31,11 +31,15 @@ import Foundation
 
 class Driver {
     let driverName: String
-    fileprivate var driverWallet: Double
+    private(set) var driverWallet: Double
 
     init(driverName: String, driverWallet: Double){
         self.driverName = driverName
         self.driverWallet = driverWallet
+    }
+    
+    func spendMoney(spent: Double) {
+        driverWallet -= spent
     }
 }
 
@@ -109,7 +113,7 @@ class Vehicle {
         compareGas ? (howMuchGas = tankVolume - gasAmount) : (howMuchGas = gas)
         let howMuchMoney = howMuchGas * fuelPerLiter
         guard howMuchMoney < driver.driverWallet else {return print("Not enough money!")}
-        driver.driverWallet -= howMuchMoney
+        driver.spendMoney(spent: howMuchMoney)
 
         guard gasAmount != tankVolume else {
             return print("Your gas tank is already full!")
