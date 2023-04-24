@@ -1,0 +1,214 @@
+// -----------------
+// 1. Создайте структуру Блюдо со свойствами Название, массив ингредиентов, цена. 
+// Создайте метод в этой структуре, который печатает состав блюда в консоль. 
+// Создайте структуру «Позиция в заказе» со свойствами Блюдо, количество этого блюда и вычисляемым свойством сумма записи.
+// Создайте класс Официант. 
+// Объявите ему свойство Заказ (массив позиций в заказе), 
+// приватное вычисляемое свойство Сумма чека, 
+// Методы Добавить позицию в заказ, Удалить позицию из заказа, 
+// Изменить позицию в заказе, Подытожить заказ (перечислить наименования и количества блюд). Выставить счёт.
+
+import Foundation
+
+struct Dish {
+    var name: String
+    var ingredients: [String]
+    var price: Int
+
+    func consist() {
+        print("This dish contains: \(ingredients)")
+    }
+}
+
+struct OrderPosition {
+    var dish: Dish
+    var dishQuantity: Int
+    var positionAmount: Int {
+        var amount = dish.price * dishQuantity
+        return amount
+    }
+    mutating func changeQauntity(newQuantity: Int) {
+        self.dishQuantity = newQuantity
+    }
+}
+
+class Waiter {
+    var order: [OrderPosition] = []
+    private var checkAmount: Int {
+        var sum = order.reduce(0) { $0 + $1.positionAmount}
+        return sum
+    }
+
+    func addPosition(added: OrderPosition){
+        order.append(added)
+        print("\(added.dishQuantity) of \(added.dish.name) was added to your order")
+    }
+
+    func deletePosition(deleted: OrderPosition){
+        for (index, position) in order.enumerated(){
+            var nameCompare = position.dish.name == deleted.dish.name
+            var quantityCompare = position.dishQuantity == deleted.dishQuantity
+            if nameCompare && quantityCompare {
+                order.remove(at: index)
+                print("\(deleted.dish.name) was removed from your order")
+            }
+        }
+    }
+
+    func changeInPosition(changed: OrderPosition, newQ: Int){
+        for (index, position) in order.enumerated(){
+            var nameCompare = position.dish.name == changed.dish.name
+            var quantityCompare = position.dishQuantity == changed.dishQuantity
+            if nameCompare && quantityCompare {
+                order[index].changeQauntity(newQuantity: newQ)
+                print("The quantity for position \(changed.dish.name) was changed")
+            }
+        }  
+    }
+
+    func changeOneToAnother(old: OrderPosition, new: OrderPosition){
+        for (index, position) in order.enumerated(){
+            var nameCompare = position.dish.name == old.dish.name
+            var quantityCompare = position.dishQuantity == old.dishQuantity
+            if nameCompare && quantityCompare {
+                order[index] = new
+                print("\(old.dish.name) has been changed to \(new.dish.name)")
+            }
+        }
+    }
+
+    func totalOrder(){
+        print("You ordered:")
+        for position in order {
+            print ("\(position.dishQuantity) of \(position.dish.name)")
+        }
+    }
+
+    func bill(){
+        print("You have to pay - \(checkAmount) dollars")
+    }
+}
+
+//Dishes:
+let nuggets = Dish(name: "Chicken Nuggets",
+                    ingredients: ["chicken fillet" , "water", "flour", "oil"],
+                    price: 3)
+let pie = Dish(name: "Apple pie",
+                ingredients: ["water", "flour", "apple", "oil", "sugar"],
+                price: 2)
+let frenchFries = Dish(name: "French fries",
+                        ingredients: ["potatoes", "oil", "salt", "sugar"],
+                        price: 4)
+
+//positions:
+var bigNuggetsBox = OrderPosition(dish: nuggets,
+                                dishQuantity: 10)
+var pieBox = OrderPosition(dish: pie,
+                            dishQuantity: 2)
+var friesBusket = OrderPosition(dish: frenchFries,
+                                dishQuantity: 5)
+
+//Waiter:
+let ben = Waiter()
+
+// -----------------
+// 2. Создайте перечисление, содержащее размеры одежды (XXS, XS, XS, S, M, L, XL). 
+// Перечисление содержит свойство getDescription, возвращающее строку "Взрослый размер», а для размера XXS - “Детский размер”.  
+// Также перечисление должно содержать чистое значение euroSize(32, 34, 36, 38, 40, 42), соответствующее каждому размеру. 
+// Создайте инициализатор, принимающий на вход euroSize.
+
+enum Sizes: Int {
+    case xxs = 32
+    case xs = 34
+    case s = 36
+    case m = 38
+    case l = 40
+    case xl = 42
+
+    var getDescription: String{
+        switch self {
+            case .xxs: return "Kids size"
+            default: return "Adult size"
+        }
+    }
+
+    init?(euroSize: Int){
+        switch euroSize {
+            case 32: self = .xxs
+            case 34: self = .xs
+            case 36: self = .s
+            case 38: self = .m
+            case 40: self = .l
+            case 42: self = .xl
+            default: return nil
+        }
+    }
+}
+
+let catSize = Sizes.xxs
+let dogSize = Sizes(euroSize: 32)
+let daughterSize = Sizes.xs
+let sonSize = Sizes(euroSize: 34)
+let momSize = Sizes.s
+let auntSize = Sizes(euroSize: 36)
+let dadSize = Sizes.m
+let uncleSize = Sizes(euroSize: 38)
+let grandmaSize = Sizes.l
+let grandpaSize = Sizes(euroSize: 40)
+let greatgrandmaSize = Sizes.xl
+let greatgrandpaSize = Sizes(euroSize: 42)
+
+let everybodySize = [catSize, dogSize, daughterSize, sonSize, momSize, auntSize, dadSize, uncleSize, grandmaSize, grandpaSize, greatgrandmaSize, greatgrandpaSize]
+
+for everybody in everybodySize{
+    print("\(everybody!) - " + everybody!.getDescription)
+}
+
+// 3. Создайте перечисление Направление с кейсами направо, налево и назад, с чистыми строковыми значениями.
+// Создайте перечисление Действие с кейсами идти (ассоциированное значение дистанция в метрах), 
+// бежать(ассоциированные значения дистанция в метрах и скорость), 
+// повернуть(ассоциированное значение - направление типа Направление), остановиться. 
+// Создайте в перечислении Действие вычисляемое свойство Описание, которое печатает строки вида:
+// Идти 200 метров
+// Бежать 400 метров со скоростью 12 км/ч
+// Повернуть направо
+// Остановиться
+
+enum Direction: String {
+    case right = "to the right"
+    case left = "to the left"
+    case back = "back"
+}
+
+enum Action {
+    case go(meters: UInt)
+    case run(meters: UInt, speed: Int)
+    case turn(direct: Direction)
+    case stop
+
+    var description: () {
+        switch self {
+            case let .go(meters): return print("Walk \(meters) meters")
+            case let .run(meters, speed): return print("Run \(meters) at \(speed) km/h")
+            case let .turn(direct): return print("Turn \(direct.rawValue)")
+            case let .stop: return print("Stop")
+        }
+    }
+}
+
+let r = Direction.right
+let l = Direction.left
+let b = Direction.back
+
+let playerGo = Action.go(meters: 100)
+playerGo.description
+let playerRun = Action.run(meters: 1000, speed: 10)
+playerRun.description
+let playerTurnRight = Action.turn(direct: r)
+playerTurnRight.description
+let playerTurnLeft = Action.turn(direct: l)
+playerTurnLeft.description
+let playerTurnBack = Action.turn(direct: b)
+playerTurnBack.description
+let playerStop = Action.stop
+playerStop.description
