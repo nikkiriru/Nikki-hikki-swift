@@ -1,0 +1,349 @@
+// -----------------
+// 1. Требуется создать справочник (массив) достопримечательностей города. 
+// Это могут быть как Скульптуры, например, пямятники, так и архитектурные объекты - здания. 
+// Структура Скульптуры имеет свойства - название, скульптор и Материал. 
+// Класс Архитектурное строение имеет свойства - почтовый индекс, название.  
+// Создать протокол, требующий свойства - название и год создания данной достопримечательности. 
+// Именно эти свойства будет необходимы для того, чтобы поместить достопримечательности в общий справочник. 
+// Создать несколько экземпляров архитектурных и скульптурных памятников и добавить их в общий массив, 
+// проверив тем самым работу кода.
+
+protocol TouristAttraction {
+    var name: String { get }
+    var creationYear: Int { get }
+}
+
+struct Sculpture: TouristAttraction {
+    let name: String 
+    let creationYear: Int
+    let sculptor: String
+    let material: String
+}
+
+class ArchitecturalBuilding: TouristAttraction {
+    let postcode: Int
+    let name: String
+    let creationYear: Int
+
+    init(name: String, creationYear: Int, postcode: Int){
+        self.name = name
+        self.creationYear = creationYear
+        self.postcode = postcode
+    }
+}
+
+let rearFrontMemorial = Sculpture(name: "Rear-front Memorial",
+                                creationYear: 1979, 
+                                sculptor: "Lev Golovnitsky",
+                                material: "bronze and granite")
+
+let theFirstTent = Sculpture(name: "The first tent",
+                            creationYear: 1966, 
+                            sculptor: "Lev Golovnitsky",
+                            material: "concrete and cast iron")
+
+let monumentToParents = Sculpture(name: "Monument to Parents",
+                                creationYear: 2007, 
+                                sculptor: "Konstantin Gilev",
+                                material: "cast iron")
+
+let borisRuchyevApartment = ArchitecturalBuilding(name: "Museum-apartment of Boris Ruchyev",
+                                                creationYear: 1975,
+                                                postcode: 455023)
+
+let germanQuarter = ArchitecturalBuilding(name: "German Quarter (quarter 14-a)",
+                                        creationYear: 1945,
+                                        postcode: 455000)
+
+var magnitogorskTour: [Dictionary<String, Int>] = []
+
+magnitogorskTour.append([rearFrontMemorial.name : rearFrontMemorial.creationYear])
+magnitogorskTour.append([theFirstTent.name : theFirstTent.creationYear])
+magnitogorskTour.append([monumentToParents.name : monumentToParents.creationYear])
+magnitogorskTour.append([borisRuchyevApartment.name : borisRuchyevApartment.creationYear])
+magnitogorskTour.append([germanQuarter.name : germanQuarter.creationYear])
+
+magnitogorskTour.forEach{attraction in print(attraction)}
+
+//OR with array not dictionary:
+var tourToMagnitogorsk: [TouristAttraction] = []
+tourToMagnitogorsk.append(rearFrontMemorial)
+tourToMagnitogorsk.append(theFirstTent)
+tourToMagnitogorsk.append(monumentToParents)
+tourToMagnitogorsk.append(borisRuchyevApartment)
+tourToMagnitogorsk.append(germanQuarter)
+
+tourToMagnitogorsk.forEach{attraction in print("\(attraction.name): \(attraction.creationYear)")}
+
+// -----------------
+// 2. Требуется создать протокол Сотрудник компании со свойствами Название компании, имя, должность. 
+// Создать класс Директор, подписанный под протокол Сотрудник. 
+// Создать класс Бухгалтер, который также является сотрудником компании. 
+// Бухгалтеру добавить свойство баланс счёта компании. 
+// Создать структуру Платёжное поручение со свойствами Контрагент (строка), 
+// тип контрагента (перечисление - ЮЛ, ФЛ, ИП, Самозанятый), назначение платежа, сумма платежа. 
+// Директор должен иметь возможность передать бухгалтеру массив Платёжных поручений для оплаты. 
+// Бухгалтер проходится по каждому документу и если хватает денег на счёте, 
+// оплачивает платежу и пишет в консоль строку вида «ПП в сторону Васи Пупкина на сумму 3000р оплачено». 
+// Если денег не хватает, пишет в консоль, что денег на балансе не хватает.
+
+protocol CompanyEmployee {
+    var companyName: String { get }
+    var employeeName: String { get }
+    var jobPosition: String { get }
+}
+
+protocol BillPaymentDelegate {
+    func payment(documents: [PaymentOrder]) -> ()
+}
+
+class Director: CompanyEmployee {
+    let companyName: String
+    let employeeName: String
+    let jobPosition = "Director"
+    var paymentDelegate: BillPaymentDelegate?
+
+    init(companyName: String, employeeName: String){
+        self.companyName = companyName
+        self.employeeName = employeeName
+    }
+    
+    func sendDocuments(documents: [PaymentOrder]) {
+        guard let send = paymentDelegate?.payment(documents: documents) else {
+            print("Accountant is on vacation, I can't bother her now")
+            return
+        }
+        print("The documents were handed over to the accountant")
+    }
+}
+
+class Accountant: CompanyEmployee, BillPaymentDelegate {
+    let companyName: String
+    let employeeName: String
+    let jobPosition = "Accountant"
+    var companyBalance = 0
+
+    init(companyName: String, employeeName: String){
+        self.companyName = companyName
+        self.employeeName = employeeName
+    }
+
+    func payment(documents: [PaymentOrder]) {
+        for document in documents {
+            guard document.paymentAmount <= companyBalance else {
+                return print("There is not enough money on the company's balance")}
+            companyBalance -= document.paymentAmount
+            print("A payment order for a \(document.contractor) in the amount of \(document.paymentAmount)$ was paid")
+        }
+        return 
+    }
+}
+
+enum ContractorType {
+    case juridicalPerson
+    case naturalPerson
+    case individualEntrepreneur
+    case selfEmployed
+}
+
+struct PaymentOrder {
+    let contractor: String
+    let contractorType: ContractorType
+    let paymentDestination: String
+    let paymentAmount: Int
+}
+
+// Director:
+let bigBoss = Director(companyName: "Roga&Copita", employeeName: "Albus Dumbledore")
+// Accountant:
+let brungilda = Accountant(companyName: "Roga&Copita", employeeName: "Minerva McGonagall")
+brungilda.companyBalance = 10000
+//Payment Orders:
+let harry = PaymentOrder(contractor: "Harry Potter", 
+                        contractorType: .juridicalPerson, 
+                        paymentDestination: "Just because I want",
+                        paymentAmount: 1000)
+let ron = PaymentOrder(contractor: "Ron Weasley", 
+                    contractorType: .naturalPerson, 
+                    paymentDestination: "For the chess",
+                    paymentAmount: 150)
+let hermione = PaymentOrder(contractor: "Hermione Granger", 
+                            contractorType: .individualEntrepreneur, 
+                            paymentDestination: "For the Alohomora",
+                            paymentAmount: 300)
+let neville = PaymentOrder(contractor: "Neville Longbottom", 
+                            contractorType: .selfEmployed, 
+                            paymentDestination: "For the Trevor",
+                            paymentAmount: 3000)
+
+var orders: [PaymentOrder] = []
+orders.append(harry)
+orders.append(ron)
+orders.append(hermione)
+orders.append(neville)
+
+bigBoss.sendDocuments(documents: orders)
+bigBoss.paymentDelegate = brungilda
+bigBoss.sendDocuments(documents: orders)
+print(brungilda.companyBalance)
+
+// -----------------
+// 3. Создайте класс День со свойствами День недели (перечисление), часы, минуты. 
+// Сделайте так, чтобы часы и минуты можно было изменять только в астрономических пределах (0-23 и 0-60 соответственно). 
+// Создайте класс Охранник со свойствами имя, 1или2смена (Bool). 
+// Охранники должны наблюдать за часами и работать либо в 1 смену (с 8 до 20:00) либо во 2 смену (с 20:00 до 8:00). 
+// Создайте класс Клерк со свойством Имя. 
+// Клерк должен наблюдать за часами и работать только по будням с 8 утра до 5 вечера. 
+// При изменении данных в классе День каждый наблюдатель должен печатать строку вида: «Я охранник Федя. Сейчас работаю»
+
+import Foundation
+
+protocol Observer{
+    func getTime(day: DayOfTheWeek, hours: Int)
+}
+
+protocol Subject {
+    func add(_ observer: Observer)
+    func remove(_ observer: Observer)
+    func timeChange(passHours: Int, passMinutes: Int)
+}
+
+enum DayOfTheWeek: Int {
+    case monday = 0
+    case tuesday = 1
+    case wednesday = 2
+    case thursday = 3
+    case friday = 4
+    case saturday = 5
+    case sunday = 6
+}
+
+class Days: Subject {
+    var day: DayOfTheWeek
+    var hours: Int
+    var minutes: Int
+    var observers: NSMutableSet = NSMutableSet()
+
+    init(day: DayOfTheWeek, hours: Int, minutes: Int){
+        self.day = day
+        let earthHours = 0..<24
+        let earthMinutes = 0..<60
+        guard earthHours.contains(hours) && earthMinutes.contains(minutes) else {
+            let moreHours = hours >= 24
+            let moreMinutes = minutes >= 60
+            let lessHours = hours < 0
+            let lessMinutes = minutes < 0
+            moreHours ? (self.hours = 23) : lessHours ? (self.hours = 0) : (self.hours = hours)
+            moreMinutes ? (self.minutes = 59) : lessMinutes ? (self.minutes = 0) : (self.minutes = minutes)
+            return 
+        }
+        self.hours = hours
+        self.minutes = minutes
+    }
+
+    func add(_ observer: Observer) {
+        observers.add(observer)
+    }
+
+    func remove(_ observer: Observer) {
+        observers.remove(observer)
+    }
+
+    func timeChange(passHours: Int, passMinutes: Int) -> () {
+        let earthHours = 0..<24
+        let earthMinutes = 0..<60
+        guard earthHours.contains(passHours) && earthMinutes.contains(passMinutes) else {
+            return print("Please, write passed time correctly")
+        }
+        var allMinutes = minutes + passMinutes
+        minutes = (allMinutes) % 60
+        var allHours = (hours + passHours) + (allMinutes / 60)
+        hours = allHours % 24
+        let allDays = day.rawValue + (allHours / 24)
+        let weekDay = allDays % 7
+        switch weekDay {
+            case 0: day = .monday
+            case 1: day = .tuesday
+            case 2: day = .wednesday
+            case 3: day = .thursday
+            case 4: day = .friday
+            case 5: day = .saturday
+            default: day = .sunday
+        }
+        observers.forEach { ($0 as! Observer).getTime(day: day, hours: hours) }
+        return print("Today is \(day). It's \(hours) : \(minutes) already")
+    }
+}
+
+class SecurityGuard: NSObject, Observer {
+    let name: String
+    var workShiftMorning: Bool
+
+    init(name: String, workShiftMorning: Bool){
+        self.name = name
+        self.workShiftMorning = workShiftMorning
+    }
+
+    func getTime(day: DayOfTheWeek, hours: Int) {
+        let workHours = 8..<20
+        if self.workShiftMorning == true {
+            guard workHours.contains(hours) else {return print("My name is \(self.name). I'm resting right now.")}
+            return print("My name is \(self.name). I'm working right now.")
+        }
+        if workShiftMorning == false {
+            guard workHours.contains(hours) else {return print("My name is \(self.name). I'm working right now.")}
+            return print("My name is \(self.name). I'm resting right now.")
+        }
+    }
+}
+
+class Clerk: NSObject, Observer {
+    let name: String
+
+    init(name: String){
+        self.name = name
+    }
+    
+    func getTime(day: DayOfTheWeek, hours: Int) {
+        let workHours = 8..<17
+        let workDays = 0...4
+        guard workDays.contains(day.rawValue) else {return print("Today is a day off! No work!")}
+        guard workHours.contains(hours) else {return print("My name is \(self.name). I'm resting right now.")}
+        return print("My name is \(self.name). I'm working right now.")
+    }
+}
+
+let elizabeth = Clerk(name: "Elizabeth")
+let antony = SecurityGuard(name: "Antony", workShiftMorning: true)
+let brandon = SecurityGuard(name: "Brandon", workShiftMorning: false)
+var nowadays = Days(day: .monday, hours: 0, minutes: 8)
+
+nowadays.add(elizabeth)
+nowadays.add(antony)
+nowadays.add(brandon)
+
+nowadays.timeChange(passHours: 8, passMinutes: 9)
+print("----------")
+nowadays.timeChange(passHours: 23, passMinutes: 59)
+print("----------")
+nowadays.timeChange(passHours: 12, passMinutes: 50)
+print("----------")
+nowadays.timeChange(passHours: 22, passMinutes: 15)
+print("----------")
+nowadays.timeChange(passHours: 14, passMinutes: 35)
+print("----------")
+nowadays.timeChange(passHours: 10, passMinutes: 39)
+print("----------")
+nowadays.timeChange(passHours: 4, passMinutes: 55)
+print("----------")
+nowadays.timeChange(passHours: 11, passMinutes: 23)
+print("----------")
+nowadays.timeChange(passHours: 21, passMinutes: 44)
+print("----------")
+nowadays.timeChange(passHours: 16, passMinutes: 12)
+print("----------")
+nowadays.timeChange(passHours: 17, passMinutes: 10)
+print("----------")
+nowadays.timeChange(passHours: 12, passMinutes: 10)
+print("----------")
+print("\(nowadays.day), \(nowadays.hours):\( nowadays.minutes)")
