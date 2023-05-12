@@ -1,0 +1,392 @@
+// -----------------
+// 1. Вы пытаетесь зарегистрироваться на сайте, используя форму с email, паролем и повтором пароля. 
+// Какие ошибки могут возникнуть при такой регистрации? 
+// Опишите эти ошибки в перечислении и напишите код, который будет их безопасно обрабатывать.
+
+enum RegError: Error {
+    case wrongEmail
+    case emailExist
+    case wrongPass
+    case passNotSame
+    case emailIsEmpty
+    case passIsEmpty
+    case doublePassIsEmpty
+}
+
+struct UserForm {
+    var email: String
+    var password: String
+    var doublePassword: String
+}
+
+class Registration {
+    var database: [String] = []
+
+    func isExist(_ element: String) -> Bool {
+        return database.contains(element)
+    }
+    
+    func addToDatabase(_ element: String) {
+        database.append(element)
+    }
+
+    func emailCheck(_ element: String) -> Bool {
+        guard element.contains("@") else { return false }
+        guard element.contains(".") else { return false }
+        guard !element.contains(" ") else { return false }
+        
+        let atIndex = element.firstIndex(of: "@")
+        var beforeAt = element.prefix(through: atIndex!)
+        beforeAt.remove(at: atIndex!)
+        guard !beforeAt.isEmpty else { return false }
+
+        var afterAt = element.suffix(from: atIndex!)
+        afterAt.removeFirst()
+        let dotIndex = afterAt.lastIndex(of: ".")
+        var beforeDot = afterAt.prefix(through: dotIndex!)
+        beforeDot.remove(at: dotIndex!)
+        guard !beforeDot.isEmpty else { return false }
+
+        var afterDot = afterAt.suffix(from:dotIndex!)
+        afterDot.removeFirst()
+        guard !afterDot.isEmpty else { return false }
+
+        return true
+    }
+
+    func passCheck(_ element: String) -> Bool {
+        let lenght = 5..<20
+        let elementLenght = element.count
+        guard lenght.contains(elementLenght) else { return false }
+
+        let bigLetters = (0..<26).map { i in Character(UnicodeScalar(i + 65)) }
+        let smallLetters = (0..<26).map { i in Character(UnicodeScalar(i + 97)) }
+        let numbersSymbols = "0123456789!@#$%^&*()-_+=,.?<>;:[]{}"
+        let allSymbols = bigLetters + smallLetters + numbersSymbols
+        let compareSymbols = element.allSatisfy{allSymbols.contains($0)}
+
+        return compareSymbols
+    }
+
+    func checkRegistration(email: String, password: String, doublePassword: String) throws {
+        guard !email.isEmpty else { throw RegError.emailIsEmpty }
+        guard !password.isEmpty else { throw RegError.passIsEmpty }
+        guard !doublePassword.isEmpty else { throw RegError.doublePassIsEmpty }
+        guard !isExist(email) else { throw RegError.emailExist }
+        guard emailCheck(email) else { throw RegError.wrongEmail }
+        guard passCheck(password) else { throw RegError.wrongPass}
+        guard password == doublePassword else { throw RegError.passNotSame }
+
+        addToDatabase(email)
+    }
+
+    func register(_ user: UserForm) throws {
+        do {
+            let checking = try checkRegistration(email: user.email, password: user.password, doublePassword: user.doublePassword)
+            print("Congratulations! You have successfully registered!")
+        } catch RegError.emailIsEmpty {
+            print("Email field is empty!")
+        } catch RegError.passIsEmpty {
+            print("Password field is empty!")
+        } catch RegError.doublePassIsEmpty {
+            print("Password check field is empty")
+        } catch RegError.emailExist {
+            print("You have already been registered")
+        } catch RegError.wrongEmail {
+            print("Email is invalid! Check your email for a match example@mail.com")
+        } catch RegError.wrongPass {
+            print("Password is invalid! The password must be at least 5 characters and no more than 20 characters, and also consist of numbers, letters of the English alphabet and the symbols: !@#$%^&*()-_+=,.?<>;:[]{}")
+        } catch RegError.passNotSame {
+            print("Password and password check are not same")
+        }
+    }
+}
+
+let user001 = UserForm(email: "terminator300@anus.com", password: "not2myanus", doublePassword: "not2myanus")
+let user002 = UserForm(email: "", password: "admin!", doublePassword: "admin!")
+let user003 = UserForm(email: "master@mail.com", password: "", doublePassword: "qwerty12345!@#")
+let user004 = UserForm(email: "harry.potter@mail.com", password: "1111oprst()", doublePassword: "")
+let user005 = UserForm(email: "terminator300@anus.com", password: "not2myanus", doublePassword: "not2myanus")
+let user006 = UserForm(email: "@mail.com", password: "qazwsx123", doublePassword: "qazwsx123")
+let user007 = UserForm(email: "mouseMikky@.com", password: "qazwsx123", doublePassword: "qazwsx123")
+let user008 = UserForm(email: "mouseMikky@mail.", password: "qazwsx123", doublePassword: "qazwsx123")
+let user009 = UserForm(email: "hikikomori@mail.com", password: "waifu1love|", doublePassword: "waifu1love|")
+let user010 = UserForm(email: "hikikomori@mail.com", password: "hiki", doublePassword: "hiki")
+let user011 = UserForm(email: "hikikomori@mail.com", password: "hikikomorilovesonly1waifuinhislife", doublePassword: "hikikomorilovesonly1waifuinhislife")
+let user012 = UserForm(email: "zelda@mario.com", password: "bloodmoonalready", doublePassword: "bloodmoonalready!!!")
+
+let newRegistration = Registration()
+try newRegistration.register(user001)
+try newRegistration.register(user002)
+try newRegistration.register(user003)
+try newRegistration.register(user004)
+try newRegistration.register(user005)
+try newRegistration.register(user006)
+try newRegistration.register(user007)
+try newRegistration.register(user008)
+try newRegistration.register(user009)
+try newRegistration.register(user010)
+try newRegistration.register(user011)
+try newRegistration.register(user012)
+
+// -----------------
+// 2. На аттракцион допускаются дети, достигшие возраста 12 лет и имеющие рост не ниже 130 см. 
+// Создайте соответствующие ошибки и напишите функцию которая способна генерировать эти ошибки и 
+// в случае успеха возвращать стоимость аттракциона (например, 300 рублей). 
+// Протестируйте работу написанного кода
+
+enum AttractError: Error {
+    case tooYoung
+    case tooShort
+}
+
+struct Kid {
+    var age: Int
+    var height: Int
+}
+
+class Attraction {
+    let ticketPrice = 300
+
+    func checkAge(_ age: Int) -> Bool {
+        let minAge = 12
+        let check = age >= minAge
+        return check
+    }
+
+    func checkHeight(_ height: Int) -> Bool {
+        let minHeight = 130
+        let check = height >= minHeight
+        return check
+    }
+
+    func checkAll(age: Int, height: Int) throws {
+        guard checkAge(age) else { throw AttractError.tooYoung }
+        guard checkHeight(height) else { throw AttractError.tooShort }
+    }
+
+    func checkKid(_ kid: Kid) throws {
+        do {
+            let checking = try checkAll(age: kid.age, height: kid.height)
+            print("Welcome! Ticket price is \(ticketPrice) rubles")
+        } catch AttractError.tooYoung {
+            print("You're too young for this attraction")
+        } catch AttractError.tooShort {
+            print("You're too short for this attraction")
+        }
+    }
+}
+
+let carousel = Attraction()
+let abraham = Kid(age: 15, height: 150)
+let boris = Kid(age: 12, height: 130)
+let corry = Kid(age: 11, height: 130)
+let dennis = Kid(age: 12, height: 110)
+let emanuil = Kid(age: 10, height: 90)
+
+try carousel.checkKid(abraham)
+try carousel.checkKid(boris)
+try carousel.checkKid(corry)
+try carousel.checkKid(dennis)
+try carousel.checkKid(emanuil)
+ 
+// -----------------
+// 3. Создать класс MacBookPorts, в котором в качестве свойств описать, какие порты находятся на беспортовых MacBook , 
+// создав методы, описывающие текущие возможности подключения (например: func typeCSend(), func charge(), func earpodsSend()).  
+// Смоделировать покупку платы расширения, содержащей дополнительные порты, например HDMI, Ethernet и USB. 
+// Какие методы следует добавить в расширение для MacBookPorts?
+
+//true - the port is free
+//false - the port is in use
+
+class MacBookPorts {
+    let usbC1 = "USB-C 1 port"
+    let usbC2 = "USB-C 2 port"
+    let jack = "Jack 3.5 port"
+
+    var usbC1Check = true
+    var usbC2Check = true
+    var jackCheck = true
+
+    var isHubOn = false
+
+    private func portCheck(_ port: String) -> Bool {
+        switch port {
+            case usbC1:
+                return usbC1Check
+            case usbC2:
+                return usbC2Check
+            default:
+                return jackCheck
+        }
+    }
+
+    private func portConnect(_ port: String) {
+        switch port {
+            case usbC1:
+                usbC1Check = false
+            case usbC2:
+                usbC2Check = false
+            default:
+                jackCheck = false
+        }
+    }
+
+    func disconnect(_ port: String) -> () {
+        guard !portCheck(port) else { return print("This port is already free") }
+        switch port {
+            case usbC1:
+                usbC1Check = true
+            case usbC2:
+                usbC2Check = true
+            default:
+                jackCheck = true
+        }
+        return print("The port was disconnected")
+    }
+
+    func charge(_ port: String) -> () {
+        guard port != jack else { return print("You can't charging by jack 3.5") }
+        guard portCheck(port) else { return print("This port is in use already") }
+        portConnect(port)
+        return print("Сharging connected!")
+    }
+
+    func fileExchange(_ port: String) -> () {
+        guard port != jack else { return print("You can't exchanging files by jack 3.5") }
+        guard portCheck(port) else { return print("This port is in use already") }
+        portConnect(port)
+        return print("New device is connected!")
+    }
+
+    func headset(_ port: String) -> () {
+        guard portCheck(port) else { return print("This port is in use already") }
+        portConnect(port)
+        return print("Headset is connected!") 
+    }
+}
+
+extension MacBookPorts {
+
+    func hubConnect(_ port: String) -> () {
+        guard port != jack else { return print("You can't connecting hub by jack 3.5") }
+        guard portCheck(port) else { return print("This port is in use already") }
+        portConnect(port)
+        isHubOn = true
+        return print("Hub is connected!")
+    }
+
+    func hubDisconnect(_ port: String) -> () {
+        guard isHubOn == true else { return print("The hub is already disconnected") }
+        switch port {
+            case usbC1:
+                usbC1Check = true
+            default:
+                usbC2Check = true
+        }
+        isHubOn = false
+        return print("The hub was disconnected")
+    }
+
+    func hdmi() {
+        guard isHubOn == true else { return print("Please, try to connect your hub")}
+        print("HDMI is connected")
+    }
+
+    func ethernet() {
+        guard isHubOn == true else { return print("Please, try to connect your hub")}
+        print("Ethernet is connected")
+    }
+
+    func usb() {
+        guard isHubOn == true else { return print("Please, try to connect your hub")}
+        print("USB storage is connected")
+    }
+}
+
+
+let myMac = MacBookPorts()
+myMac.charge(myMac.jack)
+myMac.charge(myMac.usbC1)
+myMac.fileExchange(myMac.jack)
+myMac.fileExchange(myMac.usbC1)
+myMac.fileExchange(myMac.usbC2)
+myMac.headset(myMac.jack)
+myMac.hubConnect(myMac.usbC2)
+myMac.disconnect(myMac.usbC2)
+myMac.hubConnect(myMac.usbC2)
+myMac.hdmi()
+myMac.ethernet()
+myMac.usb()
+myMac.hubDisconnect(myMac.usbC2)
+ 
+// -----------------
+// 4. Создать расширение для структуры Double, которое будет содержать метод, 
+// возводящий данное число Double в какую-либо целочисленную степень, указанную в инициализаторе метода.
+
+extension Double {
+    func inDegree(_ degree: Int) -> Double {
+        var number = self
+        if degree > 0 {
+            for _ in 1 ..< degree {
+                number *= self
+            }
+            return number
+        } else if degree < 0 {
+            let minusDegree = -degree
+            var denominator = self
+            for _ in 1 ..< minusDegree {
+                denominator *= self
+            }
+            number = 1 / denominator
+            return number
+        } else if degree == 0 {
+            number = 1.0
+            return number
+        }
+        return number
+    }
+}
+
+let myDouble = 2.1
+print(myDouble.inDegree(0))
+print(myDouble.inDegree(10))
+print(myDouble.inDegree(-1))
+
+// -----------------
+// 5. Написать функцию, которая располагает в обратном порядке элементы массива, переданного ей в качестве аргумента.
+
+func reverseArray<T>(_ array: [T]) -> [T] {
+    guard !array.isEmpty else { return array }
+    var newArray = Array<T>()
+    let quantity = array.count
+    for num in 0 ..< quantity {
+        let element = array[num]
+        newArray.insert(element, at: 0)
+    }
+    return newArray
+}
+
+let myEmptyArray = Array<Int>()
+print(reverseArray(myEmptyArray))
+
+let myIntArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+print(reverseArray(myIntArray))
+
+let myDoubleArray = [1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 0.0]
+print(reverseArray(myDoubleArray))
+
+let myStringArray = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
+print(reverseArray(myStringArray))
+
+struct Toys {
+    let type: String
+    let name: String
+}
+
+let doggy = Toys(type: "Red Dog", name: "Jack")
+let bars = Toys(type: "Snow Leopard", name: "Vasyan")
+let pokemon = Toys(type: "Cubone", name: "Cubby")
+
+let toysArray = [doggy, bars, pokemon]
+print(reverseArray(toysArray))
